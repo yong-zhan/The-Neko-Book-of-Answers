@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>答案喵~o( =∩ω∩= )m</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="./img/favicon.ico" />
+</head>
+<body>
+  <div class="container">
+    <h1>答案喵^<span class="cat-paw">🐾</span></h1>
+	<h3>真正答案在你心中</h3>
+    <input type="text" id="questionInput" placeholder="在此问出你的疑问…" autocomplete="off" />
+    <button id="askBtn">召唤答案</button>
+    <div id="answerArea"></div>
+	<div class="input-wrapper">
+		<!-- <input id="questionInput" type="text" placeholder="在此问出你的疑问…" /> -->
+		<span class="cat-icon">🐱</span>
+		  <div id="music-toggle" title="点击切换音乐">🎵</div>  <!-- 控制按钮 -->
+	</div>
+  </div>
+
+  
+ <!-- <button id="askBtn">召唤答案</button> -->
+  <div id="answerArea"></div>
+
+	<audio id="clickSound" src="./voice/子犬や子猫の歩く音.mp3" preload="auto"></audio>
+    <script src="script.js"></script>
+  
+  <!-- 背景音乐播放器（自动播放 + 可手动控制） -->
+	<audio id="bg-music" src="./voice/bg.mp3" loop></audio>
+  
+  <!-- 页面底部或body末尾放这个div -->
+  <div id="cat-pet" title="点击小猫和我聊天吧！">
+    <img id="cat-img" src="./img/mao1.png" alt="小猫" />
+    <div id="cat-bubble" class="hidden">欢迎你喵～</div>
+  </div>
+  
+  <script>
+    (function(){
+      const catPet = document.getElementById("cat-pet");
+      const catImg = document.getElementById("cat-img");
+      const catBubble = document.getElementById("cat-bubble");
+  
+      // 预设对话（可自定义）
+      const greetings = [
+        "欢迎回家，主人喵～",
+        "今天也要加油喵！",
+        "小猫在这里陪你！",
+        "想我了吗？喵～",
+		"今天要做点什么呢(*^▽^*)？",
+        "喵呜，开始互动吧！"
+      ];
+  
+      const randomChats = [
+        { text: "汪？我是一只小猫喵～", img: "./img/mao3.png" },
+		{ text: "好——无——聊——啊————(:[___]", img: "./img/mao3.png" },
+        { text: "好厉害，继续努力口呀！", img: "./img/mao4.png" },
+		{ text: "我是吉祥物喵~o( =∩ω∩= )m", img: "./img/mao4.png" },
+        { text: "再问我一次试试看！", img: "./img/mao2.png" },
+        { text: "喵~ 这是个好问题！(✪ω✪)", img: "./img/mao4.png" },
+		{ text: "有问题尽管问我喵！", img: "./img/mao4.png" },
+		{ text: "胡言乱语？！唔……才不是喵！！", img: "./img/mao5.png" },
+        { text: "哼哼，我听见了呢！￣へ￣", img: "./img/mao3.png" },
+        { text: "我来力！", img: "./img/mao2.png" }
+      ];
+  
+      const answerReplies = [
+        "答案已出炉，萌萌知晓！",
+        "小猫给你鼓掌👏",
+        "结果出来啦，期待吧！",
+        "萌萌觉得不错喵！",
+        "喵～答案来了，快看！",
+		"答案不好的话忽略它就好了喵"
+      ];
+  
+      // 显示气泡文本，自动隐藏
+      function showBubble(text) {
+        catBubble.textContent = text;
+        catBubble.classList.add("visible");
+        clearTimeout(catBubble._timeout);
+        catBubble._timeout = setTimeout(() => {
+          catBubble.classList.remove("visible");
+        }, 4000);
+      }
+  
+      // 页面打开时欢迎一句
+      window.addEventListener("load", () => {
+        const greet = greetings[Math.floor(Math.random() * greetings.length)];
+        showBubble(greet);
+      });
+  
+      // 点击小猫触发随机对话，并切换猫图（如果定义了）
+      catPet.addEventListener("click", () => {
+        const chat = randomChats[Math.floor(Math.random() * randomChats.length)];
+        showBubble(chat.text);
+        if(chat.img){
+          catImg.src = chat.img;
+        }
+        // 1秒后恢复原图
+        setTimeout(() => {
+          catImg.src = "./img/mao1.png";
+        }, 1000);
+      });
+  
+      // 监听你页面“答案生成”事件，这里给个触发示范
+      // 你实际用时，只需调用triggerAnswerReply()即可
+      window.triggerAnswerReply = function(){
+        // 40%几率触发答案对话
+        if(Math.random() < 0.4){
+          const reply = answerReplies[Math.floor(Math.random() * answerReplies.length)];
+          showBubble(reply);
+        }
+      }
+    })();
+	
+	
+	// 获取音乐元素与按钮
+	const bgMusic = document.getElementById('bg-music');
+	const toggleBtn = document.getElementById('music-toggle');
+	let musicPlaying = false;
+	  
+	// 处理自动播放（需用户互动后才能生效）
+	window.addEventListener('DOMContentLoaded', () => {
+	  const startMusic = () => {
+	    bgMusic.play().then(() => {
+	      musicPlaying = true;
+	      toggleBtn.textContent = '🔊';
+	    }).catch((e) => {
+	      // 自动播放失败，可能因浏览器限制，等待用户点击页面
+	      toggleBtn.textContent = '🔈';
+	    });
+	  };
+	  
+	  // 尝试播放音乐
+	  startMusic();
+	  
+	  // 确保用户交互后再尝试播放（某些浏览器要求）
+	  document.body.addEventListener('click', startMusic, { once: true });
+	});
+	  
+	// 点击按钮控制音乐播放/暂停
+	toggleBtn.addEventListener('click', () => {
+	  if (musicPlaying) {
+	    bgMusic.pause();
+	    toggleBtn.textContent = '🔈';
+	    musicPlaying = false;
+	  } else {
+	    bgMusic.play();
+	    toggleBtn.textContent = '🔊';
+	    musicPlaying = true;
+	  }
+	});
+  </script>
+
+</body>
+</html>
